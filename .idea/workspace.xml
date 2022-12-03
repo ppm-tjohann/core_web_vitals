@@ -1,11 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="ChangeListManager">
-    <list default="true" id="ef43d6ca-98a6-453f-9c51-96086c10b199" name="Changes" comment="">
-      <change beforePath="$PROJECT_DIR$/.idea/inspectionProfiles/Project_Default.xml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/server/src/api/Page/page.service.ts" beforeDir="false" afterPath="$PROJECT_DIR$/server/src/api/Page/page.service.ts" afterDir="false" />
-    </list>
+    <list default="true" id="ef43d6ca-98a6-453f-9c51-96086c10b199" name="Changes" comment="" />
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
@@ -72,7 +68,7 @@
       <option name="presentableId" value="Default" />
       <updated>1667828441788</updated>
       <workItem from="1667828443202" duration="4000" />
-      <workItem from="1670077382179" duration="8632000" />
+      <workItem from="1670077382179" duration="9139000" />
     </task>
     <servers />
   </component>
