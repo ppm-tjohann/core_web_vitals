@@ -1,0 +1,40 @@
+<?php
+
+namespace App\Services;
+
+use App\Models\Domain;
+use App\Models\Page;
+
+class DomainService
+{
+    public function __construct()
+    {
+    }
+
+    public static function updateOrCreateSitemap(Domain $domain)
+    {
+        $pages = self::fetchSitemap($domain->sitemap);
+
+        //create Pages
+        foreach ($pages as $sitemapPage) {
+            Page::firstOrCreate([
+                'domain_id' => $domain->id,
+                'url' => $sitemapPage,
+            ]);
+        }
+    }
+
+    public static function fetchSitemap(string $url)
+    {
+
+        $xml = simplexml_load_file($url);
+        $pages = [];
+
+        // get page urls from sitemap
+        foreach ($xml as $element) {
+            $pages[] = $element->loc[0];
+        }
+        return $pages;
+    }
+}
+
