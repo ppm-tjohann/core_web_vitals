@@ -3,6 +3,7 @@
 namespace App\Jobs;
 
 use App\Models\Domain;
+use App\Services\RateService;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldBeUnique;
 use Illuminate\Contracts\Queue\ShouldQueue;
@@ -31,31 +32,26 @@ class DefaultRatings implements ShouldQueue
      */
     public function handle()
     {
-        $domains = Domain::with('pages', 'pages.averageRatings',
-            'pages.ratings')->get();
+        $domains = Domain::with('pages', 'rating', 'pages.averageRatings')
+            ->get();
+
+
         foreach ($domains as $domain) {
-            $pages = $domain->pages;
-            foreach ($pages as $page) {
-                $defaultRatings = [
-                    'seo' => 0,
-                    'performance' => 0,
-                    'accessibility' => 0,
-                ];
-                $ratingsCount = count($page->ratings);
-                foreach ($page->ratings as $rating) {
-                    $defaultRatings['seo'] += $rating->seo;
-                    $defaultRatings['performance'] += $rating->performance;
-                    $defaultRatings['accessibility'] += $rating->accessibility;
-                }
-
-                $defaultRatings['seo'] = round($defaultRatings['seo'] / $ratingsCount);
-                $defaultRatings['performance'] = round($defaultRatings['performance'] / $ratingsCount);
-                $defaultRatings['accessibility'] = round($defaultRatings['accessibility'] / $ratingsCount);
-
-                error_log('Page Defaults : ', $defaultRatings);
-
-                // $page->averageRatings()->create($defaultRatings);
+            if ($domain->rating === null) {
+                $domain_rating = RateService::createInitialRating();
+                $domain->rating()->save($domain_rating);
+                continue;
             }
+
+
+            $page_ratings = [];
+            foreach ($domain->pages as $page) {
+                $page_ratings[] = $page->averageRatings;
+            }
+
+
+            RateService::getDefaultRatings($domain->rating, $page_ratings);
+
         }
     }
 }

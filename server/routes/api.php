@@ -19,6 +19,7 @@ use App\Http\Controllers\RateController;
 
 Route::apiResource('domain', DomainController::class);
 Route::get('domain/{domain}/sitemap', [DomainController::class, 'sitemap']);
+Route::get('domain/{domain}/average', [DomainController::class, 'average']);
 
 
 Route::apiResource('pages', PageController::class);

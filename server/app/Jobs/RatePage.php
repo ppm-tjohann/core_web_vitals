@@ -10,6 +10,7 @@ use Illuminate\Foundation\Bus\Dispatchable;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
 use App\Models\Page;
+use Throwable;
 
 class RatePage implements ShouldQueue
 {
@@ -32,7 +33,19 @@ class RatePage implements ShouldQueue
      */
     public function handle()
     {
-        $pages = Page::orderBy('updated_at', 'ASC')->get();
-        PageService::rate($pages[0]);
+        $pages = Page::where('error', '=', '0')->orderBy('updated_at', 'ASC')
+            ->get();
+        error_log('Rating: '.$pages[0]->url);
+        try {
+            PageService::rate($pages[0]);
+        } catch (\Exception $e) {
+            error_log('Catching Rate Page Error');
+            $pages[0]->update(['error' => '1']);
+        }
+    }
+
+    public function failed(Throwable $exception)
+    {
+
     }
 }

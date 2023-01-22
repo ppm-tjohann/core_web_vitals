@@ -19,6 +19,7 @@ class Kernel extends ConsoleKernel
     protected function schedule(Schedule $schedule)
     {
         $schedule->job(new RatePage)->everyMinute();
+        $schedule->job(new DefaultRatings)->everyMinute();
         $schedule->job(new CheckSitemaps)->daily();
     }
 

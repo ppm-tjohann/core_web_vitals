@@ -11,6 +11,7 @@ use App\Services\RateService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Log;
+use Spatie\QueryBuilder\QueryBuilder;
 
 class PageController extends Controller
 {
@@ -21,7 +22,10 @@ class PageController extends Controller
      */
     public function index()
     {
-        $pages = Page::with('ratings', 'averageRatings')->get();
+        $pages = QueryBuilder::for(Page::class)
+            ->with('ratings', 'averageRatings')
+            ->allowedFilters(['error'])
+            ->get();
         return response($pages);
     }
 

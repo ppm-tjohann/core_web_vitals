@@ -15,6 +15,7 @@ return new class extends Migration {
         Schema::create('pages', function (Blueprint $table) {
             $table->id();
             $table->foreignId('domain_id')->constrained()->cascadeOnDelete();
+            $table->boolean('error')->default(false);
             $table->string('url')->unique();
             $table->timestamps();
         });

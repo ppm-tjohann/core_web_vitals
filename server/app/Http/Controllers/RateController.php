@@ -15,8 +15,9 @@ class RateController extends Controller
      */
     public function index()
     {
-        $ratings = Rating::
-        with('ratable')
+        $ratings = Rating::with('ratable')
+            ->where('ratable_type', '=', 'App\Models\Page')
+            ->orderBy('created_at', 'DESC')
             ->take(request()->query('count') ?? 50)->get();
         return response($ratings);
     }

@@ -6,6 +6,7 @@ use App\Http\Requests\CreateDomainRequest;
 use App\Http\Requests\UpdateDomainRequest;
 use App\Services\DomainService;
 use App\Models\Domain;
+use App\Services\RateService;
 use Spatie\QueryBuilder\QueryBuilder;
 
 class DomainController extends Controller
@@ -39,6 +40,29 @@ class DomainController extends Controller
     public function sitemap(Domain $domain)
     {
         DomainService::updateOrCreateSitemap($domain);
+    }
+
+    public function average()
+    {
+        $domains = Domain::with('pages', 'rating', 'pages.averageRatings')
+            ->get();
+
+
+        foreach ($domains as $domain) {
+            if ($domain->rating === null) {
+                $domain_rating = RateService::createInitialRating();
+                $domain->rating()->save($domain_rating);
+                continue;
+            }
+
+            $page_ratings = [];
+            foreach ($domain->pages as $page) {
+                $page_ratings[] = $page->averageRatings;
+            }
+
+            RateService::getDefaultRatings($domain->rating, $page_ratings);
+
+        }
     }
 
 
