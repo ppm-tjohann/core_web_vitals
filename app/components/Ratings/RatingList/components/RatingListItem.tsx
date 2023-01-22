@@ -10,14 +10,11 @@ interface RatingListItemProps {
 }
 
 const RatingListItem = ( { data }: RatingListItemProps ) => {
-
-    console.log( 'Rating :', data )
-
     return (
       <Stack direction={'row'} alignItems={'center'} justifyContent={'space-between'}>
           <Stack spacing={1}>
               <Typography variant={'body2'}>{data.ratable.url}</Typography>
-              <Typography variant={'body2'} sx={{ opacity: .7 }}>{moment( data.created_at ).fromNow()}</Typography>
+              <Typography variant={'body2'} sx={{ opacity: .7 }}>{moment( data.updated_at ).fromNow()}</Typography>
           </Stack>
           <Ratings data={data}/>
       </Stack>

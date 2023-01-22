@@ -4,4 +4,5 @@ export interface Rating {
     accessibility: number
     ratable?: any
     created_at: string
+    updated_at: string
 }

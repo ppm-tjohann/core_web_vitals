@@ -12,9 +12,6 @@ interface PageListProps {
 }
 
 const PageList = ( { pages, domain }: PageListProps ) => {
-
-    console.log( 'Pages :', pages )
-
     pages = pages.filter( page => page.ratings && page.ratings.length > 0 )
 
     const getPageName = ( page: Page ) => {

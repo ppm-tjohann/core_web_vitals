@@ -23,8 +23,6 @@ const DomainPage = ( { domain }: DomainPageProps ) => {
         return <Loading/>
     }
 
-    console.log( 'Domain : ', domain )
-
     const handleClick = () => {
         push( '/domains' )
     }

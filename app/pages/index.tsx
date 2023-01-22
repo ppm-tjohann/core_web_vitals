@@ -1,21 +1,24 @@
-import { Container, Grid, Typography } from '@mui/material'
+import { Container, Grid, Stack, Typography } from '@mui/material'
 import { Rating } from '../interfaces/RatingInterface'
 import RatingList from '../components/Ratings/RatingList'
 import { GetStaticProps } from 'next'
-import { DomainHandler, RatingHandler } from '../lib/api'
+import { DomainHandler, PageHandler, RatingHandler } from '../lib/api'
 import DomainList, { DomainListOptions } from '../components/Domains/DomainList'
 import { Domain } from '../interfaces/DomainInterface'
+import { Page } from '../interfaces/PageInterface'
+import ErrorPageList from '../components/Pages/ErrorPageList'
 
 
 
 interface HomeProps {
     ratings: Rating[],
+    errorPages: Page[],
     domains: Domain[],
 }
 
-const Home = ( { ratings, domains }: HomeProps ) => {
+const Home = ( { errorPages, ratings, domains }: HomeProps ) => {
 
-    console.log( 'Ratings : ', ratings )
+    console.log( 'Error Pages :', errorPages )
 
     const domainListOptions: DomainListOptions = {
         displayActions: false, displaySitemap: false, displayUpdate: false,
@@ -25,11 +28,12 @@ const Home = ( { ratings, domains }: HomeProps ) => {
     return (
       <Container>
           <Grid container>
-              <Grid item xs={12}>
-                  <Typography variant={'h1'}>Dashboard</Typography>
-              </Grid>
               <Grid item xs={12} md={6}>
-                  <DomainList domains={domains} options={domainListOptions}/>
+                  <Typography variant={'h1'}>Dashboard</Typography>
+                  <Stack>
+                      <DomainList domains={domains} options={domainListOptions}/>
+                      <ErrorPageList pages={errorPages}/>
+                  </Stack>
               </Grid>
               <Grid item xs={12} md={6}>
                   <RatingList ratings={ratings}/>
@@ -41,10 +45,12 @@ const Home = ( { ratings, domains }: HomeProps ) => {
 
 export const getStaticProps: GetStaticProps = async () => {
 
-    const [ domainsRes, ratingsRes ] = await Promise.all( [ DomainHandler.get(), RatingHandler.get() ] )
+    const [ domainsRes, ratingsRes, errorPagesRes ] = await Promise.all( [ DomainHandler.get(), RatingHandler.latest(), PageHandler.withErrors() ] )
+
+    console.log( 'Errors : ', errorPagesRes.data )
 
     return {
-        props: { ratings: ratingsRes.data, domains: domainsRes.data },
+        props: { ratings: ratingsRes.data, domains: domainsRes.data, errorPages: errorPagesRes.data },
         revalidate: 10,
     }
 }

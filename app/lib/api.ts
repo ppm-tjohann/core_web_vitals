@@ -2,6 +2,7 @@ import axios from 'axios'
 import { BaseDomain, Domain } from '../interfaces/DomainInterface'
 import qs from 'qs'
 import { Rating } from '../interfaces/RatingInterface'
+import { Page } from '../interfaces/PageInterface'
 
 
 
@@ -29,6 +30,11 @@ const getRequestUrl = ( baseUrl: string, params?: UrlParams ): string => {
     return requestUrl
 }
 
+export const PageHandler = {
+    get: () => api.get <Page[]>( '/pages' ),
+    withErrors: () => api.get<Page[]>( '/pages?filter[error]=1' ),
+}
+
 export const DomainHandler = {
     get: ( options?: UrlParams ) => api.get<Domain[]>( getRequestUrl( 'domain', options ) ),
     find: ( id: number, options: UrlParams ) => api.get<Domain>( getRequestUrl( `domain/${id}`, options ) ),
@@ -41,4 +47,5 @@ export const DomainHandler = {
 export const RatingHandler = {
     get: () => api.get<Rating[]>( 'ratings' ),
     latest: () => api.get<Rating[]>( 'ratings?count=10' ),
+
 }

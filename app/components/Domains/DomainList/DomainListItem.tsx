@@ -21,7 +21,6 @@ const DomainListItem = ( { domain, options }: DomainListItemProps ) => {
     const router = useRouter()
 
     const handleClick = () => {
-        console.log( 'Click on', domain.name, domain.id )
         router.push( `domains/${domain.id}` )
     }
 
