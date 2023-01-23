@@ -4,7 +4,7 @@
 
 1. Das Projekt / Einleitung
     1. Vorraussetzungen
-    2. Tech- Stack
+    2. Tech-Stack
 
 3. Einrichtung Backend
     1. Installation Laravel
@@ -36,8 +36,8 @@ Für das Frontend sollte das Framework React bereits beherrscht werden.
 Erfahrungen mit NextJs oder Typescript sind nicht notwendig.
 
 Im Backend sind lediglich Erfahrungen mit MySQL empfehlenswert. Die
-Programmiersprache PHP sollte vor allem im Bezug auf Objektorientierung bekannt
-sein. Die Architektur der MVC-Prinzips ist von Vorteil.
+Programmiersprache PHP sollte vor allem in Bezug auf Objektorientierung bekannt
+sein. Die Architektur des MVC-Prinzips ist von Vorteil.
 
 ### Tech-Stack
 
@@ -65,7 +65,7 @@ Mithilfe dieser können so gut wie alle Vorstellungen umgesetzt werden.
 
 #### Model
 
-Das Model definiert die Grundstruktur eine Objekts. Ebenfalls werden hier
+Das Model definiert die Grundstruktur eines Objekts. Ebenfalls werden hier
 Relations definiert, sowie Grund-Funktionen eines Objektes hinterlegt.
 
 #### Controller
@@ -111,7 +111,7 @@ return new class extends Migration {
 
 Innerhalb der ````Schema::create```` function wird
 durch ````Blueprint $table```` die Tabelle definiert. Dabei stehen string,
-integer, boolean noch viele weitere Attributes zur Verfügung:
+integer, boolean noch viele weitere Attribute zur Verfügung:
 
 - ``id()``: Legt einen Unique-Identifier an
 - ``foreingId()``: Definiert eine 'Relation'
@@ -159,7 +159,7 @@ durch einen 404-Error direkt an den Nutzer zurückgegeben.
 
 Laravel hat als Framework verschiedenste Einsatzzwecke. Für dieses Projekt wird
 Laravel ausschließlich als API genutzt. Damit Laravel auf alle Requests mit
-einem Json-Response antwortet wird zunächst ein neuer Request erstellt.
+einem Json-Response geantwortet wird zunächst ein neuer Request erstellt.
 
 1. Request erstellen
    ```
@@ -278,14 +278,14 @@ class Domain extends Model
 
 ```
 
-Dabei wird über den Artisan bereits ein Grund-Struktur erstellt. Die geschütze
+Dabei wird über den Artisan bereits eine Grund-Struktur erstellt. Die geschütze
 variable ```$fillable``` beschreibt dabei alle Eigenschaften des Models, welche
 über Nutzer-Requests bearbeitet beziehungsweise beeinflusst werden können.
 
 Nachdem das Model definiert und die Tabelle erstellt wurde, können die Routes
 sowie der Controller ergänzt werden. Der Controller wird mit folgendem Befehl
 erstellt ```php artisan make:controller DomainController --api```. Die Flag
-```--api```das folgende Methoden Bereits in den Controller implementiert werden:
+```--api```das folgende Methoden bereits in den Controller implementiert werden:
 
 `````php
 <?php
@@ -362,8 +362,8 @@ können.
 ##### Route-Model-Binding
 
 Durch das Route-Model-Binding (**RMB**) überprüft Laravel selbständig, ob ein
-Record mit der angegebenen id überhaupt existiert. Sollte dieser nicht
-exisiteren wird automatisch ein 404 Response zurückgegeben.
+Record mit der angegebenen id überhaupt existiert. Existiert dieser nicht, wird
+automatisch ein 404 Response zurückgegeben.
 
 Das RMB bietet sich für alle Methoden an, die eine id als Parameter erwarten.
 Dazu zählen die
@@ -385,12 +385,12 @@ Methoden können deshalb wie folgt angepasst werden:
     }
 ```
 
-Da das RMB bereits überprüft ob eine Ressource mit der angegeben id existiert,
-können wir hier direkt die $domain durch einen Response zurückgeben.
+Da das RMB bereits überprüft, ob eine Ressource mit der angegeben id existiert,
+kann die ```$domain``` direkt durch einen Response zurückgegeben werden.
 
 ##### Custom Requests
 
-Es ist essenziell, Eingaben eines Nutzer zu validieren. Laravel besitzt hierfür
+Es ist essenziell, Eingaben eines Nutzers zu validieren. Laravel besitzt hierfür
 bereits eine integrierte Validierungs-Funktion. Diese Validierung kann durch
 Custom-Requests aus dem Controller ausgegliedert werden. Analog zum bereits
 erstellten JsonRequest können wir hier beispielsweise einen DomainRequest
@@ -436,7 +436,7 @@ class DomainRequest extends FormRequest
 
 Die Methode ```authorize()``` kann dafür genutzt werden, zu Bestimmen, ob der
 Nutzer die nötigen Berechtigungen für den Request hat. Authorization wird in
-diesem Projekt vernachlässigt, weshalb diese Methoden im den Wert
+diesem Projekt vernachlässigt, weshalb diese Methoden immer den Wert
 ```true``` zurückgibt.
 
 Über die Methode ````rules()```` können die Validierungs-Regeln definiert
@@ -445,7 +445,7 @@ Laravel-Dokumentation [hier](https://laravel.com/docs/9.x/validation#available-v
 nachzulesen.
 
 Sobald eine der Validierungs-Regeln nicht erefolgreich war, wird automaitsch ein
-422-Response an den Nutzer zurück geschickt. Zum Nutzen des neu erstellten
+422-Response an den Nutzer zurückgeschickt. Zum Nutzen des neu erstellten
 Requests kann dieser als entsprechender Parameter in einer Methode zugewiesen
 werden. Wichtig ist, das dies nur innerhalb eines POST-Requests funktioniert.
 
@@ -569,4 +569,74 @@ können diese in folgenden Varianten auftretten:
 
 So stehen beispielsweise die Seiten einer Domain beziehungsweise Webseite in
 einem One to Many Verhältnis. Eine Seite hat gehört immer zu einer Domain,
-hingegen kann eine Domain mehrere Seiten haben.  
+hingegen kann eine Domain mehrere Seiten haben.
+
+#### One To Many Relation am Beispiel Page
+
+Abhängigkeit von Models werden im Model selbst, sowie der Migrations-Datei
+definiert. Eine One To Many Abhängigkeit wird dabei in Migration des
+'Many'-Models gekennzeichnet. Dies geschieht über
+die ```foreignId([modelname]_id)``` Methode. Innerhalb dieser wird das '
+One'-Model zugewiesen. Neben der Abhängigkeit besitzt das Page model noch
+eine ```url```, sowie den boolean ```error```, welche standardmäßig <code>
+0</code>* ist.
+> *Laravel verwendet für die Darstellung von Booleans nicht <code>true</code>
+> oder <code>false</code> sondern <code>0</code> und <code>1</code>
+
+Das Page- und Domain-Model kann neben der bekannten ````$fillable```` nun mit
+Methoden erweitert werden. Diese Methoden helfen dabei, die Abhängigkeiten von
+Ressourcen abuzufragen:
+
+```php
+<?php
+
+namespace App\Models;
+
+use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Builder;
+
+class Page extends Model{
+    protected $fillable = ['url', 'domain_id', 'error'];
+    protected $touches=['domain'];
+
+    //default order by last update
+    protected static function boot()
+    {
+        parent::boot();
+
+        static::addGlobalScope('order', function (Builder $builder) {
+            $builder->orderBy('updated_at', 'DESC');
+        });
+    }
+
+
+    public function domain(){
+        return $this->belongsTo(Domain::class);
+    }
+}
+
+class Domain extends Model{
+    
+    protected $fillable = ['name', 'favicon', 'sitemap', 'sitemapFound', 'url'];
+    protected $with=['pages'];
+    
+    public function pages(){
+        return $this->hasMany(Pages::class);
+    }
+}
+```
+
+Neben der <code>$fillable</code> Variable bieten Models weitere nützliche
+Variablen, die im Laufe des Projektes genutzt werden:
+
+- <code>protected $with</code>: Standardmäßig werden Ressourcen ohne
+  Abhängigkeiten zurückgegeben. Alle Abhängigkeiten, die in der
+  <code>$with</code> angegeben sind, werden nun mit zurückgegeben.
+- <code>protected $touches</code>: Alle abhängigen Ressourcen innerhalb der
+  <code>$touches</code> Variable aktualsieren dabei die Spalte
+  <code>updated_at</code>. Standardmäßig wird bei einer Veränderung keine
+  Ressource 'aktualisiert'.
+
+
+
