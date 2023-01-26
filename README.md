@@ -6,14 +6,21 @@
     1. Vorraussetzungen
     2. Tech-Stack
 
-3. Einrichtung Backend
-    1. Installation Laravel
-    2. Grundlagen Laravel
-    3. Basic CRUD-Operationen
-    4. Events / Jobs / Listeners
+3. Das Laravel-Backend
+    1. Grundstruktur des Servers
+    2. Installation Laravel
+    3. Erste Schritte
+        1. Konfiguration
+        2. Models, Controller, Migrations und Routing
+        3. Json-Response
+    4. CRUD-Operationen am Beispiel der Domain
+    5. Relations in Laravel
+    6. Polymorphische Abhängigkeiten
+    7. Automatische Erstellen von Seiten (Observer & Jobs)
+    8. Bewertung von Seiten (Cron-Jobs)
 4. Einrichtung Front-End
 
-## Das Projekt
+## 1. Das Projekt
 
 Die Zuverlässigkeit von Webseiten ist einer der wichtigstens Aspekte von
 Agenturen oder selbständigen Web-Entwicklern. Ein regelmäßiger Check der
@@ -45,7 +52,29 @@ Der Tech-Stack dieses Projektes ist eine eher untypische Kombination. Im Backend
 wird Laravel (V9) ein PHP-Framework verwendet. Im Frontend wird NextJs in
 Kombination mit Typescript verwendet.
 
-## 1. Einrichtung Backend
+## 2. Das Laravel-Backend
+
+### Grundstruktur des Servers
+
+Der Server besitzt neben dem Standard Laravel Model User drei weitere:
+
+- **Domain**: Das Domain-Model beschreibt die Domain. Diese besitzt folgende
+  Eigenschaften:``id``,``name``,``favicon``,``url``,``sitemap``
+  ,``sitemapFound``,``timestamps``. Darüberhinaus besitzt diese eine Vielzahl an
+  Seiten ( ``Pages``), sowie eine Durchschnitts-Bewertung
+  ( ``Rating``).
+- **Page**: Eine Page stellt eine Seite dar. Diese ist immer einer Domain
+  zugeordnet und besitzt eine Vielzahl an Bewertungen( ``Rating``). Zusätzlich
+  besitzt diese eine `url`, sowie den Boolean `error`.
+- **Rating**: Das Rating selbst hat folgende Eigenschaften:``performance``,
+  ``seo``, ``accessibility``. Dieses steht in einer polymorphischen Many to Many
+  Beziehung zu `Pages`, sowie in einer polymorpischen One to One Beziehung
+  zu `Domain`
+
+Beim Erstellen einer Domain muss ein Link zur Sitemap übergeben werden.
+Basierend auf der Sitemap werden alle Pages erstellt. Über einen Cron-Job werden
+die Seiten regelmäßig durch die Google-Page-Speed Api überprüft und die
+Ergebnisse gespeichert.
 
 ### Installation Laravel
 
@@ -56,26 +85,45 @@ Laravel mit folgendem Befehl installiert werden:
 composer create-project laravel/laravel [server_name]
 ```
 
-### Grundaufbau / Ordner-Struktur
-
 ### Erste Schritte
 
-Diese vier Begriffe bzw. Methoden können als Kern von Laravel angesehen werden.
-Mithilfe dieser können so gut wie alle Vorstellungen umgesetzt werden.
+#### Konfiguration
 
-#### Model
+Zu Beginn werden innerhalb der ```.env ```` einige Anpassungen vorgenommen.
 
-Das Model definiert die Grundstruktur eines Objekts. Ebenfalls werden hier
+```
+GOOGLE_CWV_KEY=[GOOGLE_API_KEY]
+
+DB_CONNECTION=mysql
+DB_HOST=[DATENBANK_SERVER]
+DB_PORT=3306
+DB_DATABASE=[DATENBANK_NAME]
+DB_USERNAME=[NUTZER_DATENBANK]
+DB_PASSWORD=[NUTZER_PASSWORT_DATENBANK]
+
+QUEUE_CONNECTION=database
+```
+
+Zunächst wird der Key für die Google-Page-Speed-Api hinzugefügt. Dieser kann
+nach einer Anmeldung [hier](https://www.google.de) erhalten werden.
+
+Im Anschluss wird die Verbindung zur Datenbank integriert. Diese kann über
+```php artisan migrate``` getestet werden. Zuletz wird definiert, wie Laravel
+Jobs 'abarbeitern' soll. ```database``` legt hierbei fest, dass Jobs asynchron
+basierend auf einer Tabelle ausgeführt werden.
+
+Folgende vier Begriffe bzw. Methoden können als Kern von Laravel angesehen
+werden. Mithilfe dieser können so gut wie alle Vorstellungen umgesetzt werden.
+
+#### Models, Controller, Migrations und Routing
+
+Das **Model** definiert die Grundstruktur eines Objekts. Ebenfalls werden hier
 Relations definiert, sowie Grund-Funktionen eines Objektes hinterlegt.
 
-#### Controller
-
-Der Controller verknüpft das Model mit den Routes. Innerhalb der einzelnen
+Der **Controller** verknüpft das Model mit den Routes. Innerhalb der einzelnen
 Controller-Funktionen können
 
-#### Migration
-
-Über Migration werden die einzelnen Tabellen in der Datenbank erstellt.
+Über **Migrationen** werden die einzelnen Tabellen in der Datenbank erstellt.
 Innerhalb dieser werden die Tabellen nach folgendem Prinzip definiert:
 
 ````php
@@ -119,9 +167,7 @@ integer, boolean noch viele weitere Attribute zur Verfügung:
   ``created_at`` an
 - [weitere Methoden](https://laravel.com/docs/9.x/migrations#creating-columns)
 
-#### Routing
-
-Im Routing wird typischerweise eine Request-URL mit einer Controller-Methode
+Im **Routing** wird typischerweise eine Request-URL mit einer Controller-Methode
 verbunden. Diese Verknüpfung wird innerhalb der ```routes/api.php``` für alle
 Api-Endpunkte festgelegt.
 
@@ -191,8 +237,6 @@ einem Json-Response geantwortet wird zunächst ein neuer Request erstellt.
 Folgend werden am Beispiel des Domain-Models CRUD-Operationen in Laravel
 gezeigt. Dabei wird zunächst die Grund-Struktur erstellt und im Anschluss
 erweitert.
-
-#### Erstellen der Migration, Controller, Routes und Model
 
 Zunächst wird das Model und die damit verbunden Migration erstellt. Dies
 geschieht über den folgenden Befehl:
@@ -585,7 +629,7 @@ eine ```url```, sowie den boolean ```error```, welche standardmäßig <code>
 
 Das Page- und Domain-Model kann neben der bekannten ````$fillable```` nun mit
 Methoden erweitert werden. Diese Methoden helfen dabei, die Abhängigkeiten von
-Ressourcen abuzufragen:
+Ressourcen abzufragen:
 
 ```php
 <?php
@@ -638,5 +682,104 @@ Variablen, die im Laufe des Projektes genutzt werden:
   <code>updated_at</code>. Standardmäßig wird bei einer Veränderung keine
   Ressource 'aktualisiert'.
 
+Über Methoden können die Abhängigkeiten einzelner Models definiert werden. Im
+Fall der Domain geschieht dies über die Methode ````pages()````. Umgekehrt wird
+im Page Model die Abhängigkeit über die Methode ````domain()```` definiert.
 
+Im Controller können die Abhängigkeiten entweder direkt bei der Abfrage über
+die ```with()``` Methode geladen werden. Dabei werden als Parameter die
+Methoden-Namen des jeweiligen Models übergeben. Dies werden entweder als String
+oder bei mehrerren als String-Array übergeben.
 
+Im Page-Model wird zusätzlich über die ```boot()```-Methode ein neuer Scope
+gesetzt. Dieser dient dazu, dass die Ressourcen standardmäßig in nach
+````updated_at```` in absteigender Reihenfolge geordnet werden.
+
+### Polymorphische Abhängigkeiten
+
+### Automatische Erstellen von Seiten (Observer & Jobs)
+
+Nachdem eine neue Domain registriert wurde, sollen basierend auf der Sitemap die
+entsprechenden Seiten erstellt werden. Hierfür bieten sich Observer, sowie Jobs
+an.
+
+#### Observer
+
+Observer dienen in Laravel dazu, auf bestimmte Events zu reagieren. Diese '
+beobachten' ein Model und ermöglichen es, eine Funktion nach einem Event
+auszuführen. Dazu gehören folgende Events:
+-**created**: Eine neue Ressource wurde erstellt -**updated**: Eine bestehende
+Ressource wurde akutalisiert -**deleted**: Eine Ressource wurde gelöscht. -**
+restored**: Eine gelöschte Ressource wurde wiederhergestellt. -**forceDeleted**:
+Eine Ressource wurde permant gelöscht.
+
+Dabei wird den Methoden die jeweilige Ressource übergeben.
+
+Ein Observer kann mit folgendem Befehl erstellt werden:
+
+`php artisan make:observer DomainObserver --model=Domain`
+Über die `--model`-Flag kann der Observer direkt einem Model zugewiesen werden.
+Innerhalb der `created()`-Methode können also nach dem Erstellen einer neuen
+Domain die Seiten erstellt werden. Da diese relativ Zeitaufwändig ist, bieten
+sich hierfür Jobs an.
+
+#### Jobs
+
+Jobs ermögolichen es, zeitintensive Aufgaben im Hintergrund auszuführen. Der
+Nutzer muss nicht auf die Antwort des Servers warten. Nachdem ausführen eines
+Jobs kann der Nutzer dennoch beispielsweise über einen Push-Nachricht oder
+E-Mail darüber informiert werden.
+
+Zum Erstellen eines Jobs muss folgender Befehl ausgeführt werden:
+`php artisan make:job CreateSitemap`
+
+Die Datei muss wie folgt angepasst werden:
+
+```php
+<?php
+
+namespace App\Jobs;
+
+use App\Models\Domain;
+use App\Services\DomainService;
+use Illuminate\Bus\Queueable;
+use Illuminate\Contracts\Queue\ShouldBeUnique;
+use Illuminate\Contracts\Queue\ShouldQueue;
+use Illuminate\Foundation\Bus\Dispatchable;
+use Illuminate\Queue\InteractsWithQueue;
+use Illuminate\Queue\SerializesModels;
+
+class CreateSitemap implements ShouldQueue
+{
+    use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
+
+    public Domain $domain;
+
+    /**
+     * Create a new job instance.
+     *
+     * @return void
+     */
+    public function __construct(Domain $domain)
+    {
+        $this->domain = $domain;
+    }
+
+    /**
+     * Execute the job.
+     *
+     * @return void
+     */
+    public function handle()
+    {
+        DomainService::updateOrCreateSitemap($this->domain);
+    }
+}
+```
+
+Innerhalb des DomainService werden nun im Hintergrund alle Seiten erstellt.
+
+Im Entwicklungsprozess kann über den Befehl ``php artisan jobs:work`` die
+sogennante 'queue' abgearbeitet werden.
+
+### Bewertung von Seiten
