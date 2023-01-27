@@ -783,3 +783,124 @@ Im Entwicklungsprozess kann über den Befehl ``php artisan jobs:work`` die
 sogennante 'queue' abgearbeitet werden.
 
 ### Bewertung von Seiten
+
+Die Bewertung von Seiten soll regelmäßig, ohne Nutzeraktion, durchgeführt
+werden. Hierfür bieten sich Cron-Jobs an.
+
+Cron-Jobs sind grundsätzlich wiederkehrende Aufgaben, die zu vordefinierten
+Zeiten ausgeführt werden. Laravel bietet hier von Haus aus bereits die
+Möglichkeit Jobs einzuplanen. Diese können innerhalb der `schedule()`-Methode
+der Kernel Klasse definiert werden. Die Datei berfindet sich im
+Ordner `app/Console/Kernel.php`
+
+```php
+/**
+* Define the application's command schedule.
+*
+* @param  \Illuminate\Console\Scheduling\Schedule  $schedule
+* @return void
+*/
+protected function schedule(Schedule $schedule){
+    $schedule->job(new RatePage)->everyMinute();
+    $schedule->job(new DefaultRatings)->everyMinute();
+    $schedule->job(new CheckSitemaps)->daily();
+}
+```
+
+Analog zum Erstellen der Sitemap wurde für die Bewertung von Seiten ein Job
+erstellt:
+
+```php
+<?php
+
+namespace App\Jobs;
+
+use App\Services\PageService;
+use Illuminate\Bus\Queueable;
+use Illuminate\Contracts\Queue\ShouldBeUnique;
+use Illuminate\Contracts\Queue\ShouldQueue;
+use Illuminate\Foundation\Bus\Dispatchable;
+use Illuminate\Queue\InteractsWithQueue;
+use Illuminate\Queue\SerializesModels;
+use App\Models\Page;
+use Throwable;
+
+class RatePage implements ShouldQueue
+{
+    use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
+
+    /**
+     * Create a new job instance.
+     *
+     * @return void
+     */
+    public function __construct()
+    {
+    }
+
+    /**
+     * Execute the job.
+     *
+     * @return void
+     */
+    public function handle()
+    {
+        $pages = Page::where('error', '=', '0')->orderBy('updated_at', 'ASC')->get();
+        error_log('Rating: '.$pages[0]->url);
+        try {
+            PageService::rate($pages[0]);
+        } catch (\Exception $e) {
+            error_log('Catching Rate Page Error');
+            $pages[0]->update(['error' => '1']);
+        }
+    }
+}
+
+```
+
+Die Logik zur Bewertung einer Seite befindet sich innerhalb der statischen
+Klasse PageService. Diese ist wie folgt aufgebaut:
+
+```php
+<?php
+
+namespace App\Services;
+
+use App\Models\Page;
+use Illuminate\Support\Facades\Http;
+
+class PageService
+{
+
+
+    public static function rate(Page $page): Page
+    {
+        $api_rating = self::getRating($page->url);
+        error_log('Page Rated : '.$page->url);
+        $page->ratings()->create($api_rating);
+        $page->touch();
+        return $page;
+    }
+
+    public static function getRating($url)
+    {
+        $key = env('GOOGLE_CWV_KEY');
+
+        $url = 'https://www.googleapis.com/pagespeedonline/v5/runPagespeed?url='.$url.'&category=PERFORMANCE&category=ACCESSIBILITY&category=SEO&strategy=MOBILE&key='.$key;
+        $response = Http::get($url);
+        $json = $response->json();
+        $ratings = $json['lighthouseResult']['categories'];
+
+
+        return [
+            'seo' => $ratings['seo']['score'] * 100,
+            'performance' => $ratings['performance']['score'] * 100,
+            'accessibility' => $ratings['accessibility']['score'] * 100,
+        ];
+    }
+}
+
+```
+
+
+
