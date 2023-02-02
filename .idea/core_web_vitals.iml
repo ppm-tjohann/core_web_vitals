@@ -118,6 +118,7 @@
       <excludeFolder url="file://$MODULE_DIR$/server/vendor/league/config" />
       <excludeFolder url="file://$MODULE_DIR$/server/vendor/spatie/laravel-query-builder" />
       <excludeFolder url="file://$MODULE_DIR$/server/vendor/spatie/laravel-package-tools" />
+      <excludeFolder url="file://$MODULE_DIR$/app" />
     </content>
     <orderEntry type="inheritedJdk" />
     <orderEntry type="sourceFolder" forTests="false" />
