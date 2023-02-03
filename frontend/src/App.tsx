@@ -1,4 +1,3 @@
-import Login from './pages/Login'
 import { CssBaseline, ThemeProvider } from '@mui/material'
 import theme from './lib/theme'
 import Dashboard from './pages/Dashboard'

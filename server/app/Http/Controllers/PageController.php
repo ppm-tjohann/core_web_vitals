@@ -24,7 +24,7 @@ class PageController extends Controller
     {
         $pages = QueryBuilder::for(Page::class)
             ->with('ratings', 'averageRatings')
-            ->allowedFilters(['error'])
+            ->allowedFilters(['error', 'domain_id'])
             ->get();
         return response($pages);
     }

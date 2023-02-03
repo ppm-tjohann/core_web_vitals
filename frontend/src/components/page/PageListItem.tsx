@@ -1,39 +1,38 @@
-import { Box, Chip, Collapse, Grid, IconButton, Stack, Typography } from '@mui/material'
-
-import { useState } from 'react'
-import PageList from './/PageList'
-import DomainInfo from '../domain/DomainInfo'
-import DomainPageInfo from '../domain/DomainPageInfo'
-import DomainRatings from '../domain/DomainRatings'
-import DomainActions from '../domain/DomainActions'
-import { ExpandMore } from '@mui/icons-material'
-import FlexBox from '../shared/FlexBox'
+import { Box, Chip, Collapse, Grid, IconButton, Paper, Stack, Typography } from '@mui/material'
 import RatingStack from '../rating/RatingStack'
+import { Page } from '../../types/Page'
+import moment from 'moment'
+import { useContext, useState } from 'react'
+import { DomainContext } from '../domain/DomainWrapper'
 
 
 
-const PageListItem = () => {
+const PageListItem = ( { url, updated_at, error, average_ratings }: Page ) => {
 
-    const [ expanded, setExpanded ] = useState( false )
+    const { url: domainUrl } = useContext( DomainContext )
+    const [ hovered, setHover ] = useState( false )
 
-    const toggleList = () => {
-        setExpanded( e => !e )
+    const handleEnter = () => {
+        setHover( true )
+    }
+    const handleLeave = () => {
+        setHover( false )
     }
 
     return (
-      <Box sx={{ p: 2 }}>
-          <Stack spacing={{ xs: 0, sm: 2 }} direction={'row'} alignItems={'center'} justifyContent={'space-between'} flexWrap={'wrap'}>
-              <Stack my={1} direction={{ xs: 'column', sm: 'row' }} alignItems={'center'} justifyContent={{ xs: 'space-between', lg: 'flex-start' }}
-                     flexGrow={1}>
-                  <Typography variant={'body1'}> https://www.waldkliniken-eisenberg/home</Typography>
-                  <Typography variant={'body2'} sx={{ opacity: .5 }}><Chip label={'5 minutes ago'}/></Typography>
-              </Stack>
-
-              <Stack my={1} direction={'row'} flexWrap={'wrap'} alignItems={'center'} justifyContent={'space-between'} flexGrow={1}>
-                  <RatingStack/>
-                  <Box><IconButton><ExpandMore/></IconButton></Box>
-              </Stack>
-          </Stack>
+      <Box sx={{
+          py: 3,
+          px: 2, backgroundColor: error === 1 ? 'error.main' : 'none', transition: 'all 250ms ease-in-out',
+          backgroundImage: 'linear-gradient(rgba(255,255,255,0),rgba(255,255,255,0))',
+          ':hover': {
+              backgroundImage: 'linear-gradient(rgba(255,255,255,.1),rgba(255,255,255,.1))',
+          },
+      }}>
+          <Grid container justifyContent={'space-between'} alignItems={'center'} spacing={2}>
+              <Grid item xs={12} md={6}> <Typography variant={'body1'} sx={{ lineBreak: 'anywhere' }}>{url.replace( domainUrl, '' )}</Typography></Grid>
+              <Grid item xs={6} sm={3}> <RatingStack data={average_ratings}/></Grid>
+              <Grid item xs={6} sm={'auto'}> <Chip label={moment( updated_at ).fromNow()} sx={{ opacity: .5 }}/></Grid>
+          </Grid>
       </Box>
     )
 }

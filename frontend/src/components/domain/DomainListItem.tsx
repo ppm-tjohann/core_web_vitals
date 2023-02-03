@@ -3,37 +3,22 @@ import DomainRatings from './DomainRatings'
 import DomainPageInfo from './DomainPageInfo'
 import DomainInfo from './DomainInfo'
 import DomainActions from './DomainActions'
-import { useState } from 'react'
-import PageList from '../page/PageList'
+import { Domain } from '../../types/Domain'
+import DomainWrapper from './DomainWrapper'
 
 
 
-const DomainListItem = () => {
-
-    const [ expanded, setExpanded ] = useState( false )
-
-    const toggleList = () => {
-        setExpanded( e => !e )
-    }
+const DomainListItem = ( domain: Domain ) => {
 
     return (
-      <Box sx={{ width: '100%' }}>
-          <Stack direction={'row'} alignItems={'center'} flexWrap={'wrap'} justifyContent={'space-between'} spacing={0}>
-              <Stack my={1} direction={{ xs: 'column', sm: 'row' }} alignItems={'center'} justifyContent={{ xs: 'space-between', lg: 'flex-start' }}
-                     flexGrow={1}>
-                  <DomainInfo/>
-                  <DomainPageInfo/>
-              </Stack>
-              <Stack my={1} direction={'row'} alignItems={'center'} justifyContent={'space-between'} flexGrow={1}>
-                  <DomainRatings/>
-                  <DomainActions onClick={toggleList} expanded={expanded}/>
-              </Stack>
-          </Stack>
-          <Collapse in={expanded} mountOnEnter unmountOnExit>
-              <PageList/>
-          </Collapse>
-
-      </Box>
+      <DomainWrapper data={domain}>
+          <Grid container justifyContent={'space-between'} alignItems={'center'} sx={{ my: 4 }} spacing={2}>
+              <Grid item xs={12} sm={8} lg={4}><DomainInfo/></Grid>
+              <Grid item xs={12} sm={4} lg={3}><DomainPageInfo/></Grid>
+              <Grid item xs={10} sm={8} lg={3}><DomainRatings/></Grid>
+              <Grid item xs={'auto'}><DomainActions/></Grid>
+          </Grid>
+      </DomainWrapper>
     )
 }
 export default DomainListItem
