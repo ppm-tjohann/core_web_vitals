@@ -112,6 +112,26 @@
       <path value="$PROJECT_DIR$/server/vendor/league/config" />
       <path value="$PROJECT_DIR$/server/vendor/spatie/laravel-query-builder" />
       <path value="$PROJECT_DIR$/server/vendor/spatie/laravel-package-tools" />
+      <path value="$PROJECT_DIR$/server/vendor/paragonie/random_compat" />
+      <path value="$PROJECT_DIR$/server/vendor/paragonie/sodium_compat" />
+      <path value="$PROJECT_DIR$/server/vendor/pusher/pusher-php-server" />
+      <path value="$PROJECT_DIR$/server/vendor/beyondcode/laravel-websockets" />
+      <path value="$PROJECT_DIR$/server/vendor/react/socket" />
+      <path value="$PROJECT_DIR$/server/vendor/evenement/evenement" />
+      <path value="$PROJECT_DIR$/server/vendor/symfony/psr-http-message-bridge" />
+      <path value="$PROJECT_DIR$/server/vendor/facade/ignition-contracts" />
+      <path value="$PROJECT_DIR$/server/vendor/react/event-loop" />
+      <path value="$PROJECT_DIR$/server/vendor/react/cache" />
+      <path value="$PROJECT_DIR$/server/vendor/react/stream" />
+      <path value="$PROJECT_DIR$/server/vendor/react/http" />
+      <path value="$PROJECT_DIR$/server/vendor/react/promise-timer" />
+      <path value="$PROJECT_DIR$/server/vendor/react/promise" />
+      <path value="$PROJECT_DIR$/server/vendor/react/promise-stream" />
+      <path value="$PROJECT_DIR$/server/vendor/react/dns" />
+      <path value="$PROJECT_DIR$/server/vendor/fig/http-message-util" />
+      <path value="$PROJECT_DIR$/server/vendor/ratchet/rfc6455" />
+      <path value="$PROJECT_DIR$/server/vendor/cboden/ratchet" />
+      <path value="$PROJECT_DIR$/server/vendor/ringcentral/psr7" />
     </include_path>
   </component>
   <component name="PhpProjectSharedConfiguration" php_language_level="8.0">

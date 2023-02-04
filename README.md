@@ -1,5 +1,14 @@
-n# E-Learning – Automatisierte Analyze von Webseiten mithilfe der Google
+# E-Learning – Automatisierte Analyze von Webseiten mithilfe der Google
+
 Page-Speed-Insights Api
+
+## TODOS
+
+- [x] Sitemap refresh
+- [x] Max 10 Ratings per Page
+- [ ] Websocket for Ratings and Domain fetching
+- [ ] Errorpage refresh
+- [ ] Infos on Dashboard
 
 ## Inhaltsverzeichnis
 

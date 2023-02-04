@@ -24,6 +24,8 @@ Route::get('domain/{domain}/average', [DomainController::class, 'average']);
 
 Route::apiResource('pages', PageController::class);
 Route::get('pages/{page}/average', [PageController::class, 'average']);
+Route::get('pages/test/{page}', [PageController::class, 'test']);
+
 Route::apiResource('ratings', RateController::class);
 
 Route::get('pages/domain/{domain}', [PageController::class, 'showDomain']);

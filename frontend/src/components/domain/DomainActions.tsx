@@ -8,15 +8,16 @@ import { DomainContext } from './DomainWrapper'
 
 const DomainActions = () => {
     const theme = useTheme()
-    const breakpoint = useMediaQuery( theme.breakpoints.up( 'md' ) )
-    const { expanded } = useContext( DomainContext )
+    const { expanded, toggleList } = useContext( DomainContext )
 
     return (
       <Stack alignItems={'flex-end'}>
-          <IconButton sx={{
-              transition: `transform ${theme.transitions.duration.standard}ms ${theme.transitions.easing.easeInOut}`,
-              transform: `rotate(${expanded ? 180 : 0}deg)`,
-          }}><ExpandMore/></IconButton>
+          <IconButton
+            onClick={toggleList}
+            sx={{
+                transition: `transform ${theme.transitions.duration.standard}ms ${theme.transitions.easing.easeInOut}`,
+                transform: `rotate(${expanded ? 180 : 0}deg)`,
+            }}><ExpandMore/></IconButton>
       </Stack>
     )
 }

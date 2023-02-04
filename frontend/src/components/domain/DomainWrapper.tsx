@@ -28,9 +28,7 @@ const DomainWrapper = ( { data: domain, children }: DomainWrapper ) => {
     return (
       <DomainContext.Provider value={{ ...domain, expanded, toggleList }}>
           <>
-              <Box onClick={toggleList} sx={{ cursor: 'pointer' }}>
-                  {children}
-              </Box>
+              <Box sx={{ cursor: 'pointer' }}>{children}</Box>
               <Collapse in={expanded} mountOnEnter unmountOnExit>
                   <PageList/>
               </Collapse>

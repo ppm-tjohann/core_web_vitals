@@ -3,7 +3,6 @@
 namespace App\Services;
 
 use App\Models\Page;
-use App\Models\Rating;
 use Illuminate\Support\Facades\Http;
 
 class PageService
@@ -14,8 +13,7 @@ class PageService
     {
         $api_rating = self::getRating($page->url);
         error_log('Page Rated : '.$page->url);
-        $page->ratings()->create($api_rating);
-        $page->touch();
+        self::setRating($page, $api_rating);
         return $page;
     }
 
@@ -28,11 +26,26 @@ class PageService
         $json = $response->json();
         $ratings = $json['lighthouseResult']['categories'];
 
-
         return [
             'seo' => $ratings['seo']['score'] * 100,
             'performance' => $ratings['performance']['score'] * 100,
             'accessibility' => $ratings['accessibility']['score'] * 100,
         ];
     }
+
+    public static function setRating(Page $page, $rating): void
+    {
+        $page->loadCount('ratings');
+        $ratings_count = $page->ratings_count;
+        if ($ratings_count > 10) {
+            //Delete older Ratings
+            $ratings = $page->load('ratings')->ratings;
+            for ($i = 9; $i < count($ratings); $i++) {
+                $ratings[$i]->delete();
+            }
+        }
+        $page->ratings()->create($rating);
+        $page->touch();
+    }
+
 }

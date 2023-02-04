@@ -15,6 +15,13 @@ use Spatie\QueryBuilder\QueryBuilder;
 
 class PageController extends Controller
 {
+
+    public function test(Page $page)
+    {
+        PageService::rate($page);
+    }
+
+
     /**
      * Display a listing of the resource.
      *
@@ -23,7 +30,7 @@ class PageController extends Controller
     public function index()
     {
         $pages = QueryBuilder::for(Page::class)
-            ->with('ratings', 'averageRatings')
+            ->with('ratings', 'domain')
             ->allowedFilters(['error', 'domain_id'])
             ->get();
         return response($pages);

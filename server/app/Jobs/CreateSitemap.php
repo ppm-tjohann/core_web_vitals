@@ -2,10 +2,10 @@
 
 namespace App\Jobs;
 
+use App\Events\SitemapCreatedOrUpdated;
 use App\Models\Domain;
 use App\Services\DomainService;
 use Illuminate\Bus\Queueable;
-use Illuminate\Contracts\Queue\ShouldBeUnique;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
 use Illuminate\Queue\InteractsWithQueue;
@@ -35,5 +35,8 @@ class CreateSitemap implements ShouldQueue
     public function handle()
     {
         DomainService::updateOrCreateSitemap($this->domain);
+        SitemapCreatedOrUpdated::dispatch($this->domain);
     }
+
+
 }

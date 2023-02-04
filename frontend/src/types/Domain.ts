@@ -1,17 +1,21 @@
 import { Rating } from './Rating'
+import z from 'zod'
 
 
 
-export type Domain = {
+export const Domain = z.object( {
+    name: z.string().min( 3 ),
+    favicon: z.string().url(),
+    sitemap: z.string().url(),
+    url: z.string().url(),
+} )
+export type AddDomainRequest = z.infer<typeof Domain>
+
+export type Domain = z.infer<typeof Domain> & {
     id: number
-    favicon: string
-    name: string
     pages_count: number
     rating?: Rating | null
-    sitemap: string
     sitemapFound: boolean
-    url: string
-
     created_at: string
     updated_at: string
 }

@@ -10,7 +10,7 @@ const DomainRatings = () => {
     const { rating } = useContext( DomainContext )
 
     return ( <Stack direction={'row'} alignItems={'center'} flexWrap={'wrap'} justifyContent={{ lg: 'center' }} spacing={1}>
-        <RatingStack data={rating}/>
+        <RatingStack data={rating} options={{ withArrow: false }}/>
         <IconButton size={'small'} sx={{ opacity: .5 }}>
             <Refresh/>
         </IconButton>

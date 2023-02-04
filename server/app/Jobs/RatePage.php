@@ -2,8 +2,12 @@
 
 namespace App\Jobs;
 
+use App\Events\PageRated;
+use App\Models\Rating;
 use App\Services\PageService;
+use Illuminate\Broadcasting\Channel;
 use Illuminate\Bus\Queueable;
+use Illuminate\Contracts\Broadcasting\ShouldBroadcast;
 use Illuminate\Contracts\Queue\ShouldBeUnique;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
@@ -16,6 +20,8 @@ class RatePage implements ShouldQueue
 {
     use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
 
+    public Page $page;
+
     /**
      * Create a new job instance.
      *
@@ -23,7 +29,6 @@ class RatePage implements ShouldQueue
      */
     public function __construct()
     {
-
     }
 
     /**
@@ -37,7 +42,9 @@ class RatePage implements ShouldQueue
             ->get();
         error_log('Rating: '.$pages[0]->url);
         try {
-            PageService::rate($pages[0]);
+            $page = PageService::rate($pages[0]);
+            $this->page = $page;
+            PageRated::dispatch($this->page);
         } catch (\Exception $e) {
             error_log('Catching Rate Page Error');
             $pages[0]->update(['error' => '1']);

@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Http\Requests\CreateDomainRequest;
 use App\Http\Requests\UpdateDomainRequest;
+use App\Jobs\CreateSitemap;
 use App\Services\DomainService;
 use App\Models\Domain;
 use App\Services\RateService;
@@ -39,7 +40,11 @@ class DomainController extends Controller
 
     public function sitemap(Domain $domain)
     {
-        DomainService::updateOrCreateSitemap($domain);
+        foreach ($domain->pages as $page) {
+            $page->delete();
+        }
+        dispatch(new CreateSitemap($domain));
+
     }
 
     public function average()

@@ -25,20 +25,6 @@ class PageObserver
      */
     public function updated(Page $page)
     {
-        $page->load(['averageRatings', 'ratings']);
-        $averageRatings = $page->averageRatings === null ? RateService::createInitialRating()
-            : $page->averageRatings;
-
-        RateService::getDefaultRatings($averageRatings, $page->ratings);
-
-        if (count($page->ratings) > 10) {
-            for ($i = 9; $i < count($page->ratings); $i++) {
-                $rating = $page->ratings[$i];
-                $rating->delete();
-            }
-        }
-
-
     }
 
     /**

@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from 'react'
+import { useContext, useEffect, useMemo, useState } from 'react'
 import { CircularProgress, Collapse, Divider, Paper, Stack } from '@mui/material'
 import DomainListItem from './DomainListItem'
 import api from '../../lib/api'
@@ -7,22 +7,13 @@ import error = Simulate.error
 import { Domain } from '../../types/Domain'
 import { TransitionGroup } from 'react-transition-group'
 import FlexBox from '../shared/FlexBox'
+import { DomainListContext } from '../../pages/Dashboard'
 
 
 
 const DomainList = () => {
 
-    const [ loading, setLoading ] = useState( true )
-    const [ domains, setDomains ] = useState<Domain[]>( [] )
-    useEffect( () => {
-        setLoading( true )
-        api.get( 'domain' ).then( res => {
-            console.log( res.data )
-            setDomains( res.data )
-        } )
-        setLoading( false )
-
-    }, [] )
+    const { loading, domains } = useContext( DomainListContext )
 
     return (
       <Paper>

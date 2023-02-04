@@ -4,19 +4,17 @@ import { Page } from '../../types/Page'
 import moment from 'moment'
 import { useContext, useState } from 'react'
 import { DomainContext } from '../domain/DomainWrapper'
+import { Refresh } from '@mui/icons-material'
 
 
 
 const PageListItem = ( { url, updated_at, error, average_ratings }: Page ) => {
 
-    const { url: domainUrl } = useContext( DomainContext )
-    const [ hovered, setHover ] = useState( false )
+    const { url: domainUrl, rating: domainRating } = useContext( DomainContext )
 
-    const handleEnter = () => {
-        setHover( true )
-    }
-    const handleLeave = () => {
-        setHover( false )
+    // TODO handleError Reset for Page
+    const handleErrorReset = () => {
+
     }
 
     return (
@@ -29,8 +27,13 @@ const PageListItem = ( { url, updated_at, error, average_ratings }: Page ) => {
           },
       }}>
           <Grid container justifyContent={'space-between'} alignItems={'center'} spacing={2}>
-              <Grid item xs={12} md={6}> <Typography variant={'body1'} sx={{ lineBreak: 'anywhere' }}>{url.replace( domainUrl, '' )}</Typography></Grid>
-              <Grid item xs={6} sm={3}> <RatingStack data={average_ratings}/></Grid>
+              <Grid item xs={12} md={6}>
+                  <Stack direction={'row'} alignItems={'center'}>
+                      {error === 1 && <IconButton><Refresh/></IconButton>}
+                      <Typography variant={'body1'} sx={{ lineBreak: 'anywhere' }}>{url.replace( domainUrl, '' )}</Typography>
+                  </Stack>
+              </Grid>
+              <Grid item xs={6} sm={3}> <RatingStack data={average_ratings} context={domainRating}/></Grid>
               <Grid item xs={6} sm={'auto'}> <Chip label={moment( updated_at ).fromNow()} sx={{ opacity: .5 }}/></Grid>
           </Grid>
       </Box>

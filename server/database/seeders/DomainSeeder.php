@@ -20,14 +20,14 @@ class DomainSeeder extends Seeder
             'name' => 'Waldkliniken Eisenberg',
             'favicon' => 'https://www.waldkliniken-eisenberg.de/favicon.ico',
             'sitemap' => 'https://www.waldkliniken-eisenberg.de/sitemap.xml?sitemap=pages&cHash=ebe68cfc3df09d093dd2e6bb5f340ba6',
-            'url' => 'https://www.waldkliniken-eisenberg.de/',
+            'url' => 'https://www.waldkliniken-eisenberg.de',
         ]);
 
         Domain::create([
             'name' => 'Radiologie Peine',
             'favicon' => 'https://peine-radiologie.fra1.digitaloceanspaces.com/c1e8431f94b51e1ef50fde1a92d0f79c.png',
             'sitemap' => 'https://www.peine-radiologie.de/sitemap.xml',
-            'url' => 'https://www.peine-radiologie.de/',
+            'url' => 'https://www.peine-radiologie.de',
         ]);
 
         Domain::create([
@@ -41,7 +41,14 @@ class DomainSeeder extends Seeder
             'name' => 'Radios Praxen',
             'favicon' => 'https://www.radios-praxen.de/typo3conf/ext/radios/Resources/Public/Images/favicons/android-icon-192x192.png',
             'sitemap' => 'https://radios-praxen.de/sitemap-www.xml',
-            'url' => 'https://www.radios-praxen.de/',
+            'url' => 'https://www.radios-praxen.de',
+        ]);
+
+        Domain::create([
+            'name' => 'Landkreis Landshut erleben',
+            'favicon' => 'https://www.landkreis-landshut-erleben.de/img/icon.png',
+            'sitemap' => 'https://www.landkreis-landshut-erleben.de/sitemap.xml',
+            'url' => 'https://www.landkreis-landshut-erleben.de/sitemap.xml',
         ]);
 
 //        Domain::create([
