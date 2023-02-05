@@ -5,6 +5,9 @@ namespace App\Console;
 use App\Jobs\CheckSitemaps;
 use App\Jobs\DefaultRatings;
 use App\Jobs\RatePage;
+use App\Jobs\UpdateAllDomainRatings;
+use App\Jobs\UpdateDomainRatings;
+use App\Models\Domain;
 use Illuminate\Console\Scheduling\Schedule;
 use Illuminate\Foundation\Console\Kernel as ConsoleKernel;
 
@@ -19,7 +22,7 @@ class Kernel extends ConsoleKernel
     protected function schedule(Schedule $schedule)
     {
         $schedule->job(new RatePage)->everyMinute();
-        $schedule->job(new DefaultRatings)->everyThirtyMinutes();
+        $schedule->job(new UpdateAllDomainRatings)->everyFifteenMinutes();
         $schedule->job(new CheckSitemaps)->daily();
     }
 

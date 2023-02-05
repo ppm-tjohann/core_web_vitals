@@ -13,14 +13,19 @@ class DomainService
 
     public static function updateOrCreateSitemap(Domain $domain)
     {
-        $pages = self::fetchSitemap($domain->sitemap);
+        try {
+            $pages = self::fetchSitemap($domain->sitemap);
 
-        //create Pages
-        foreach ($pages as $sitemapPage) {
-            Page::firstOrCreate([
-                'domain_id' => $domain->id,
-                'url' => $sitemapPage,
-            ]);
+            //create Pages
+            foreach ($pages as $sitemapPage) {
+                Page::firstOrCreate([
+                    'domain_id' => $domain->id,
+                    'url' => $sitemapPage,
+                ]);
+                $domain->update(['sitemapFound' => '1']);
+            }
+        } catch (\e) {
+            $domain->update(['sitemapFound' => '0']);
         }
     }
 

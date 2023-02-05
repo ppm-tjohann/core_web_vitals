@@ -3,18 +3,17 @@
 namespace App\Services;
 
 use App\Models\Page;
+use App\Models\Rating;
 use Illuminate\Support\Facades\Http;
 
 class PageService
 {
 
 
-    public static function rate(Page $page): Page
+    public static function rate(Page $page): Rating
     {
         $api_rating = self::getRating($page->url);
-        error_log('Page Rated : '.$page->url);
-        self::setRating($page, $api_rating);
-        return $page;
+        return self::setRating($page, $api_rating);
     }
 
     public static function getRating($url)
@@ -33,7 +32,7 @@ class PageService
         ];
     }
 
-    public static function setRating(Page $page, $rating): void
+    public static function setRating(Page $page, $rating): Rating
     {
         $page->loadCount('ratings');
         $ratings_count = $page->ratings_count;
@@ -44,8 +43,11 @@ class PageService
                 $ratings[$i]->delete();
             }
         }
-        $page->ratings()->create($rating);
+        $rating = new Rating($rating);
+
+        $page->ratings()->save($rating);
         $page->touch();
+        return $rating;
     }
 
 }

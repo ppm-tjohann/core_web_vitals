@@ -31,21 +31,6 @@ class DomainObserver
      */
     public function updated(Domain $domain)
     {
-        // TODO updated Domain
-        error_log('Domain Observer Update');
-        $domain->load(['pages', 'rating']);
-        $count = count($domain->pages);
-        $ratings = [
-            'seo' => 0,
-            'performance' => 0,
-            'accessibility' => 0,
-        ];
-        foreach ($domain->pages as $page) {
-            $ratings['seo'] += $page->averageRatings->seo;
-            $ratings['performance'] += $page->averageRatings->performance;
-            $ratings['accessibility'] += $page->averageRatings->accessibility;
-        }
-        error_log('Updating Domain Rating:', $ratings, $count);
     }
 
     /**

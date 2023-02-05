@@ -1,10 +1,9 @@
 <?php
 
-use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\DomainController;
 use App\Http\Controllers\PageController;
-use App\Http\Controllers\RateController;
+use App\Http\Controllers\RatingController;
 
 /*
 |--------------------------------------------------------------------------
@@ -24,10 +23,15 @@ Route::get('domain/{domain}/average', [DomainController::class, 'average']);
 
 Route::apiResource('pages', PageController::class);
 Route::get('pages/{page}/average', [PageController::class, 'average']);
-Route::get('pages/test/{page}', [PageController::class, 'test']);
 
-Route::apiResource('ratings', RateController::class);
 
 Route::get('pages/domain/{domain}', [PageController::class, 'showDomain']);
 Route::get('pages/rate/{page}', [PageController::class, 'rate']);
+
+
+Route::group(['prefix' => 'ratings'], function () {
+    Route::get('', [RatingController::class, 'index']);
+    Route::get('today', [RatingController::class, 'today']);
+    Route::get('pages', [RatingController::class, 'pages']);
+});
 

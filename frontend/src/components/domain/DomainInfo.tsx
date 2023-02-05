@@ -6,6 +6,7 @@ import { DomainContext } from './DomainWrapper'
 
 const DomainInfo = () => {
     const { name, url, favicon } = useContext( DomainContext )
+
     return (
       <Stack direction={'row'} alignItems={'center'}>
           <Avatar src={favicon}/>

@@ -1,4 +1,5 @@
 import { Rating } from './Rating'
+import { Domain } from './Domain'
 
 
 
@@ -11,4 +12,5 @@ export type Page = {
     url: string
     updated_at: string
     created_at: string
+    domain?: Domain
 }

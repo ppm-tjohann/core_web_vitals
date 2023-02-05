@@ -12,8 +12,6 @@ interface UserInput {
 const UserInput = ( { label }: UserInput ) => {
 
     const { values, errors, handleChange } = useContext( AddDomainContext )
-    console.log( 'Validating:', errors.includes( label ), label )
-
     return (
       <TextField fullWidth label={label} value={values[label]} onChange={handleChange( label )} error={errors.includes( label )}/>
     )

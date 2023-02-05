@@ -16,11 +16,6 @@ use Spatie\QueryBuilder\QueryBuilder;
 class PageController extends Controller
 {
 
-    public function test(Page $page)
-    {
-        PageService::rate($page);
-    }
-
 
     /**
      * Display a listing of the resource.
@@ -30,17 +25,16 @@ class PageController extends Controller
     public function index()
     {
         $pages = QueryBuilder::for(Page::class)
-            ->with('ratings', 'domain')
-            ->allowedFilters(['error', 'domain_id'])
+            ->allowedFields(['id'])
+            ->allowedIncludes(['ratings', 'domain', 'averageRatings'])
+            ->allowedFilters(['error', 'domain_id', 'id'])
             ->get();
         return response($pages);
     }
 
     public function average(Page $page)
     {
-        error_log($page->url);
         $page->load(['ratings', 'averageRatings']);
-
         RateService::getDefaultRatings($page->averageRatings, $page->ratings);
     }
 
@@ -83,8 +77,7 @@ class PageController extends Controller
      */
     public function update(PageRequest $request, Page $page)
     {
-        $page->url = $request->url;
-        $page->save();
+        $page->update($request->all());
         return response($page);
     }
 
@@ -104,7 +97,6 @@ class PageController extends Controller
 
     public function rate(Page $page)
     {
-        error_log('Rating Controller');
         $page = PageService::rate($page);
         return response($page, 201);
     }

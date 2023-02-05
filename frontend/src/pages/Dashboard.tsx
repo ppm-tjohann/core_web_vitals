@@ -4,6 +4,10 @@ import AddDomain from '../components/addDomain'
 import { createContext, useEffect, useState } from 'react'
 import { Domain } from '../types/Domain'
 import api from '../lib/api'
+import RatingList from '../components/rating/RatingList'
+import DomainCount from '../components/dashboard/DomainCount'
+import PageCount from '../components/dashboard/PageCount'
+import RatingCount from '../components/dashboard/RatingCount'
 
 
 
@@ -20,7 +24,7 @@ const Dashboard = () => {
     const [ domains, setDomains ] = useState<Domain[]>( [] )
     useEffect( () => {
         setLoading( true )
-        api.get( 'domain' ).then( res => {
+        api.get( 'domain?include=rating' ).then( res => {
             console.log( res.data )
             setDomains( res.data )
         } )
@@ -35,16 +39,22 @@ const Dashboard = () => {
     return <Box p={{ xs: 2, md: 4, lg: 8 }}>
         <DomainListContext.Provider value={{ domains, loading, handleAddDomain }}>
             <Grid container spacing={{ xs: 2, md: 4, lg: 8 }} alignItems={'stretch'}>
-                <Grid item xs={12} xl={12}>
+                <Grid item xs={12} lg={6}>
                     <Paper>
                         <Typography variant={'h1'}>Core Web Vitals</Typography>
                     </Paper>
                 </Grid>
+                <Grid item xs={4} lg={2}><DomainCount/></Grid>
+                <Grid item xs={4} lg={2}><PageCount/></Grid>
+                <Grid item xs={4} lg={2}><RatingCount/></Grid>
                 <Grid item xs={12}>
                     <AddDomain/>
                 </Grid>
                 <Grid item xs={12} xl={9}>
                     <DomainList/>
+                </Grid>
+                <Grid item xs={12} xl={3}>
+                    <RatingList/>
                 </Grid>
             </Grid>
         </DomainListContext.Provider>

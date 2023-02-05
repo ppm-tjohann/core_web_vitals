@@ -10,6 +10,7 @@ class Page extends Model
 {
     use HasFactory;
 
+    protected $with = ['averageRatings'];
     protected $touches = ['domain'];
     public $timestamps = true;
     protected $fillable = ['url', 'domain_id', 'error'];
@@ -22,6 +23,11 @@ class Page extends Model
         static::addGlobalScope('order', function (Builder $builder) {
             $builder->orderBy('updated_at', 'DESC');
         });
+    }
+
+    public function averageRatings()
+    {
+        return $this->morphOne(Rating::class, 'ratable');
     }
 
 

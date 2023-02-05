@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Models\Scopes\OrderScope;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
@@ -11,6 +12,13 @@ class Rating extends Model
 
     protected $touches = ['ratable'];
     protected $fillable = ['seo', 'performance', 'accessibility'];
+
+    protected static function boot()
+    {
+        parent::boot();
+        self::addGlobalScope(new OrderScope());
+    }
+
 
     public function ratable()
     {

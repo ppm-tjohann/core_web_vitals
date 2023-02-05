@@ -42,6 +42,6 @@ class RateService
             'accessibility' => round($accessibility / $counter),
         ];
         $defaultRating->update($new_ratings);
-        error_log('Ratings Updated');
+        return $new_ratings;
     }
 }

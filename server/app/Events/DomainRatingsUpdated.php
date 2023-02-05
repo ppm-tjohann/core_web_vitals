@@ -3,6 +3,7 @@
 namespace App\Events;
 
 use App\Models\Domain;
+use App\Models\Rating;
 use Illuminate\Broadcasting\Channel;
 use Illuminate\Broadcasting\InteractsWithSockets;
 use Illuminate\Broadcasting\PresenceChannel;
@@ -12,12 +13,12 @@ use Illuminate\Contracts\Broadcasting\ShouldBroadcastNow;
 use Illuminate\Foundation\Events\Dispatchable;
 use Illuminate\Queue\SerializesModels;
 
-class SitemapCreatedOrUpdated implements ShouldBroadcastNow
+class DomainRatingsUpdated implements ShouldBroadcastNow
 {
     use Dispatchable, InteractsWithSockets, SerializesModels;
 
-
     public Domain $domain;
+
 
     /**
      * Create a new event instance.
@@ -26,7 +27,7 @@ class SitemapCreatedOrUpdated implements ShouldBroadcastNow
      */
     public function __construct(Domain $domain)
     {
-        $this->domain = $domain->loadCount('pages');
+        $this->domain = $domain->loadMissing('rating');
     }
 
     /**
@@ -41,6 +42,7 @@ class SitemapCreatedOrUpdated implements ShouldBroadcastNow
 
     public function broadcastAs()
     {
-        return 'domain.sitemap.'.$this->domain->id;
+        return 'domain.rating.'.$this->domain->id;
     }
+
 }

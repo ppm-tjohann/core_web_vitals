@@ -6,9 +6,10 @@ Page-Speed-Insights Api
 
 - [x] Sitemap refresh
 - [x] Max 10 Ratings per Page
-- [ ] Websocket for Ratings and Domain fetching
-- [ ] Errorpage refresh
-- [ ] Infos on Dashboard
+- [x] Websocket for Ratings
+- [x] Infos on Dashboard
+- [x] Errorpage refresh
+- [x] Domain fetching
 
 ## Inhaltsverzeichnis
 

@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Http\Requests\CreateDomainRequest;
 use App\Http\Requests\UpdateDomainRequest;
 use App\Jobs\CreateSitemap;
+use App\Jobs\UpdateDomainRatings;
 use App\Services\DomainService;
 use App\Models\Domain;
 use App\Services\RateService;
@@ -21,7 +22,7 @@ class DomainController extends Controller
     {
         $domains = QueryBuilder::for(Domain::Class)
             ->allowedFields(['id', 'name'])
-            ->allowedIncludes(['pages', 'pages.ratings', 'ratings'])
+            ->allowedIncludes(['pages', 'pages.ratings', 'rating'])
             ->get();
         return response($domains);
     }
@@ -43,31 +44,16 @@ class DomainController extends Controller
         foreach ($domain->pages as $page) {
             $page->delete();
         }
-        dispatch(new CreateSitemap($domain));
 
+        $domain->update(['sitemapFound' => 0]);
+        CreateSitemap::dispatch($domain);
+        $domain->loadCount('pages');
+        return response($domain);
     }
 
-    public function average()
+    public function average(Domain $domain)
     {
-        $domains = Domain::with('pages', 'rating', 'pages.averageRatings')
-            ->get();
-
-
-        foreach ($domains as $domain) {
-            if ($domain->rating === null) {
-                $domain_rating = RateService::createInitialRating();
-                $domain->rating()->save($domain_rating);
-                continue;
-            }
-
-            $page_ratings = [];
-            foreach ($domain->pages as $page) {
-                $page_ratings[] = $page->averageRatings;
-            }
-
-            RateService::getDefaultRatings($domain->rating, $page_ratings);
-
-        }
+        UpdateDomainRatings::dispatch($domain);
     }
 
 

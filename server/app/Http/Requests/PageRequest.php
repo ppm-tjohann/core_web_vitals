@@ -24,7 +24,8 @@ class PageRequest extends FormRequest
     public function rules()
     {
         return [
-            'url' => ['string', 'unique:pages', 'required'],
+            'url' => ['string'],
+            'error' => ['boolean']
         ];
     }
 }

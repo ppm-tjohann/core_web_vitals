@@ -10,7 +10,6 @@ class Domain extends Model
     use HasFactory;
 
 
-    protected $with = ['rating'];
     protected $withCount = ['pages'];
     protected $fillable = ['name', 'favicon', 'sitemap', 'sitemapFound', 'url'];
 

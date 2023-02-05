@@ -1,20 +1,31 @@
-import { Box, Chip, Collapse, Grid, IconButton, Paper, Stack, Typography } from '@mui/material'
+import { Box, Chip, CircularProgress, Collapse, Grid, IconButton, Paper, Stack, Typography } from '@mui/material'
 import RatingStack from '../rating/RatingStack'
 import { Page } from '../../types/Page'
 import moment from 'moment'
 import { useContext, useState } from 'react'
 import { DomainContext } from '../domain/DomainWrapper'
 import { Refresh } from '@mui/icons-material'
+import api from '../../lib/api'
 
 
 
-const PageListItem = ( { url, updated_at, error, average_ratings }: Page ) => {
+const PageListItem = ( { id, url, updated_at, error: inputError, average_ratings }: Page ) => {
 
+    const [ loading, setLoading ] = useState( false )
+    const [ error, setError ] = useState( inputError )
     const { url: domainUrl, rating: domainRating } = useContext( DomainContext )
 
     // TODO handleError Reset for Page
-    const handleErrorReset = () => {
-
+    const handleErrorReset = async () => {
+        setLoading( true )
+        try {
+            await api.put( `pages/${id}`, { url, error: 0 } )
+            setError( 0 )
+        }
+        catch ( e ) {
+            setError( 2 )
+        }
+        setLoading( false )
     }
 
     return (
@@ -29,7 +40,8 @@ const PageListItem = ( { url, updated_at, error, average_ratings }: Page ) => {
           <Grid container justifyContent={'space-between'} alignItems={'center'} spacing={2}>
               <Grid item xs={12} md={6}>
                   <Stack direction={'row'} alignItems={'center'}>
-                      {error === 1 && <IconButton><Refresh/></IconButton>}
+                      {error > 0 && !loading && <IconButton disabled={error === 2} onClick={handleErrorReset}><Refresh/></IconButton>}
+                      {error === 1 && loading && <CircularProgress color={'secondary'}/>}
                       <Typography variant={'body1'} sx={{ lineBreak: 'anywhere' }}>{url.replace( domainUrl, '' )}</Typography>
                   </Stack>
               </Grid>
