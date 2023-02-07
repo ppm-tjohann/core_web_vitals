@@ -2,15 +2,6 @@
 
 Page-Speed-Insights Api
 
-## TODOS
-
-- [x] Sitemap refresh
-- [x] Max 10 Ratings per Page
-- [x] Websocket for Ratings
-- [x] Infos on Dashboard
-- [x] Errorpage refresh
-- [x] Domain fetching
-
 ## Inhaltsverzeichnis
 
 1. Das Projekt / Einleitung
@@ -29,7 +20,6 @@ Page-Speed-Insights Api
     6. Polymorphische Abhängigkeiten
     7. Automatische Erstellen von Seiten (Observer & Jobs)
     8. Bewertung von Seiten (Cron-Jobs)
-4. Einrichtung Front-End
 
 ## 1. Das Projekt
 

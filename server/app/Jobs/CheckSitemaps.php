@@ -32,10 +32,9 @@ class CheckSitemaps implements ShouldQueue
      */
     public function handle()
     {
-
         $domains = Domain::all();
         foreach ($domains as $domain) {
-            event(new CheckSitemaps($domain));
+            CreateSitemap::dispatch($domain);
         }
     }
 }

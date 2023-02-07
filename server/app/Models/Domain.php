@@ -9,7 +9,6 @@ class Domain extends Model
 {
     use HasFactory;
 
-
     protected $withCount = ['pages'];
     protected $fillable = ['name', 'favicon', 'sitemap', 'sitemapFound', 'url'];
 

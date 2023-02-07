@@ -11,7 +11,7 @@ class Rating extends Model
     use HasFactory;
 
     protected $touches = ['ratable'];
-    protected $fillable = ['seo', 'performance', 'accessibility'];
+    protected $fillable = ['seo', 'performance', 'accessibility', 'variant'];
 
     protected static function boot()
     {

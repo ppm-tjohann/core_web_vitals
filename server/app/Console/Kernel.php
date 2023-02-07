@@ -3,7 +3,6 @@
 namespace App\Console;
 
 use App\Jobs\CheckSitemaps;
-use App\Jobs\DefaultRatings;
 use App\Jobs\RatePage;
 use App\Jobs\UpdateAllDomainRatings;
 use App\Jobs\UpdateDomainRatings;

@@ -27,7 +27,8 @@ class Page extends Model
 
     public function averageRatings()
     {
-        return $this->morphOne(Rating::class, 'ratable');
+        return $this->morphOne(Rating::class, 'ratable')
+            ->where('variant', '=', 'average');
     }
 
 
@@ -38,7 +39,8 @@ class Page extends Model
 
     public function ratings()
     {
-        return $this->morphMany(Rating::class, 'ratable')->orderBy('created_at',
-            'DESC');
+        return $this->morphMany(Rating::class, 'ratable')
+            ->orderBy('created_at', 'DESC')
+            ->where('variant', '=', 'rating');
     }
 }

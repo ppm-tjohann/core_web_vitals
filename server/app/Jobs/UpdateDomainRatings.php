@@ -9,6 +9,7 @@ use App\Models\Rating;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldBeUnique;
 use Illuminate\Contracts\Queue\ShouldQueue;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Foundation\Bus\Dispatchable;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
@@ -38,39 +39,27 @@ class UpdateDomainRatings implements ShouldQueue
      */
     public function handle()
     {
-        try {
-            $pages = $this->domain->pages->where('error', '=', '0');
-            $ratings = $this->getAverageRatings($pages);
-            $this->setDomainRatings($ratings);
-            DomainRatingsUpdated::dispatch($this->domain);
+        $pages = $this->domain->pages()
+            ->where('error', '=', '0')
+            ->whereHas('averageRatings')
+            ->get();
 
-        } catch (\Exception $e) {
-            error_log('Updating Domain Ratings failed for '.$this->domain->name);
-            error_log($e);
+        if (count($pages) === 0) {
+            error_log('No Ratings for: '.$this->domain->name);
+            return;
         }
-
+        $ratings = $this->getAverageRatings($pages);
+        $this->setDomainRatings($ratings);
+        DomainRatingsUpdated::dispatch($this->domain);
     }
 
     protected function setDomainRatings($ratings): void
     {
-        try {
-            error_log('Setting Domain Ratings for: '.$this->domain->name);
-            if ($this->domain->rating !== null) {
-                $this->domain->rating->update($ratings);
-            } else {
-                $this->domain->rating()->create($ratings);
-            }
-            $this->domain_rating = $this->domain->rating;
-        } catch (\Exception $e) {
-            error_log('Setting Ratings Failed');
-            error_log($e);
-        }
-
+        $this->domain->rating()->updateOrCreate(
+            ['ratable_id' => $this->domain->id], $ratings);
+        $this->domain_rating = $this->domain->rating;
     }
 
-    /**
-     * @param  Page[]  $pages
-     */
     protected function getAverageRatings($pages)
     {
         $seo = 0;
@@ -78,27 +67,11 @@ class UpdateDomainRatings implements ShouldQueue
         $accessibility = 0;
         $count = count($pages);
 
-        if ($count === 0) {
-            throw new \Exception('No Pages');
-        }
-
-
         foreach ($pages as $page) {
-            if ($page->averageRatings === null) {
-                $count--;
-                continue;
-            }
             $seo += $page->averageRatings->seo;
             $performance += $page->averageRatings->performance;
             $accessibility += $page->averageRatings->accessibility;
-
         }
-        error_log('Numbers: S: '.$seo.', P: '.$performance.', A: '.$accessibility);
-        error_log('Divided Numbers: S: '.$seo / $count.',P: '.$performance /
-            $count.',A: '.$accessibility / $count);
-        error_log('Rounded Numbers: S: '.round($seo / $count).', P: '.round
-            ($performance / $count).', A: '.round($accessibility / $count));
-
 
         return [
             'seo' => round($seo / $count),

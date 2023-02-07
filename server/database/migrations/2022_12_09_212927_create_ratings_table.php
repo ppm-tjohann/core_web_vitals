@@ -20,6 +20,7 @@ return new class extends Migration {
             $table->integer('accessibility');
 
             $table->morphs('ratable');
+            $table->string('variant')->nullable();
 
             $table->timestamps();
         });
